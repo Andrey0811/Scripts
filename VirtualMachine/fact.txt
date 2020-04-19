@@ -1,0 +1,21 @@
+input 0
+write 1 1
+write 2 1
+write 3 1
+write 100 0
+write 202 62
+more 0 202 3
+less 0 100 3
+link 1
+more 1 0 2
+equal 0 1 2
+plus 3 1 1
+multiply 2 1 2
+goto 1
+link 2
+output 2
+exit
+link 3
+write 2 Error
+output 2
+exit

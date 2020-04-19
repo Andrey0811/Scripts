@@ -1,0 +1,187 @@
+<html>
+<script type="text/javascript">
+function Encoding(){
+	var str = new String(document.getElementById('in').value);
+	var outp = document.getElementById("out");
+	var q = /[^01]+/;
+	if (q.test(str)) {
+		outp.value = "Wrong string!";
+		return false;
+	}
+	var i = 1;
+	var pow = 0;
+	var powOfTwo = new Array();
+	powOfTwo[pow] = i;
+	while (i <= str.length){
+	  i *= 2;
+	  pow++;
+	  powOfTwo[pow] = i;
+	}
+  var len = str.length;
+  var inStr = new String();
+  pow = 0;
+  var count = len - 1;
+  for (var i = 0; i < len + pow + 1; i++){
+    if (i + 1 == powOfTwo[pow]){
+      pow++;
+      inStr += "*";
+    }
+    else{
+      inStr += str.charAt(count);
+      count--;
+    }
+  }
+  var sum = ControlSum(inStr);
+  var strTemp = new String();
+  count = sum.length - 1;
+  for (var i = 0; i < inStr.length; i++){
+    if (inStr.charAt(i) == '*'){
+      strTemp += sum.charAt(count);
+      count--;
+    }
+    else{
+      strTemp += inStr.charAt(i);
+    }
+  }
+	strTemp = Reverse(strTemp);
+	outp.value = Chet(strTemp) + strTemp;
+	return false;
+
+  function Reverse(str){
+    var reverseStr = new String();
+    for (var i = str.length - 1; i >= 0; i--){
+      reverseStr += str.charAt(i);
+    }
+    return reverseStr;
+  }
+
+  function ControlSum(str){
+    var arr = new Array();
+    for (var i = 0; i < str.length; i++){
+      if (str.charAt(i) == '1'){
+        arr.push(i + 1);
+      }
+    }
+    var numberTemp = arr[0];
+    for (var i = 1; i < arr.length; i++){
+      numberTemp = numberTemp ^ arr[i];
+    }
+    return numberTemp.toString(2);
+  }
+
+	function Chet(str){
+		var count = 0;
+		for (var i = 0;i < str.length; i++){
+			if (str.charAt(i) == '1') count++;
+		}
+		return (count % 2).toString();
+	}
+}
+
+function Decoding(){
+	var str = new String(document.getElementById('out').value);
+	var outp = document.getElementById('fixed');
+	var q = /[^01]+/;
+	if (q.test(str)) {
+		outp.value = "Wrong string!";
+		return false;
+	}
+	var outStr = new String();
+	var i = 1
+	var pow = 0;
+	var powOfTwo = new Array();
+	powOfTwo[pow] = i;
+	while (i <= str.length){
+	  i *= 2;
+	  pow++;
+	  powOfTwo[pow] = i;
+	}
+	pow = 0;
+	var inStr = Recovery(str);
+	if (!isNaN(inStr)){
+		for (var j = 0; j < inStr.length; j++){
+			if (powOfTwo[pow] == j + 1){
+				pow++;
+			}
+			else {
+				outStr += inStr.charAt(j);
+			}
+		}
+	}
+	if (outStr == "") outStr = Error();
+	outp.value = Reverse(outStr);
+	return false;
+
+	function Recovery(inStr){
+		var len = inStr.length;
+		var bitChetOne = inStr.charAt(0);
+		inStr = Reverse(inStr.substr(1));
+		var bitChetTwo = Chet(Reverse(inStr));
+		var outStr = new String();
+		var count = 0;
+		var sum = parseInt(ControlSum(inStr), 2);
+		for (var i = 0; i < inStr.length; i++){
+			if (i + 1 == sum){
+				outStr += parseInt(inStr.charAt(i), 2) ^ 1;
+				count++;
+			}
+			else {
+				outStr += inStr.charAt(i)
+			}
+		}
+		if (sum != 0 && sum < len && bitChetOne == bitChetTwo){
+			outStr = Error();
+		}
+		return outStr;
+	}
+
+  function Reverse(str){
+    var reverseStr = new String();
+    for (var i = str.length - 1; i >= 0; i--){
+      reverseStr += str.charAt(i);
+    }
+    return reverseStr;
+  }
+
+  function ControlSum(str){
+    var arr = new Array();
+    for (var i = 0; i < str.length; i++){
+      if (str.charAt(i) == '1'){
+        arr.push(i + 1);
+      }
+    }
+    var numberTemp = arr[0];
+    for (var i = 1; i < arr.length; i++){
+      numberTemp = numberTemp ^ arr[i];
+    }
+    return numberTemp.toString(2);
+  }
+
+	function Chet(str){
+		var count = 0;
+		for (var i = 0;i < str.length; i++){
+			if (str.charAt(i) == '1') count++;
+		}
+		return count % 2;
+	}
+
+	function Error(){
+		return "sekatsim erom dna 2"
+	}
+}
+</script>
+<head>
+<title>Hamming code</title>
+</head>
+<body align="center" bgcolor="#E8E8E8">
+<p style=""><b>Hamming code</b></p>
+<form style="" onsubmit="return Encoding()">
+Input: <input autofocus type="text" autocomplete="off" id="in"> <input type="submit" value="Encode">
+</form>
+<form style="" onsubmit="return Decoding()">
+Output: <input autofocus type="text" autocomplete="off" id="out"> <input type="submit" value="Fix">
+</form>
+Fixed: <input type="text" id="fixed" readonly>
+</form>
+</body>
+</html>
